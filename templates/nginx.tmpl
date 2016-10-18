@@ -37,7 +37,7 @@ server {
 
 {{$sslcrt := printf "/services/nginx/%s/ssl-crt" $filename}}
 {{if exists $sslcrt}}
-	ssl on;
+	#ssl on;
 	ssl_certificate /etc/nginx/keys/{{$filename}}.crt;
 	ssl_certificate_key /etc/nginx/keys/{{$filename}}.key;
 
