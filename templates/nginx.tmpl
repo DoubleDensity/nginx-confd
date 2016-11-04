@@ -60,9 +60,8 @@ server {
 		{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
 		{{range ls $custdir}}
 			{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
-			{{$value := getv $key}}
-			{{$data := json $value}}
-			proxy_pass http://{{$data.ip}}:{{$data.port}};
+			{{$value := getv $key}}	
+			proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
 		{{end}}
 
 		#proxy_redirect off;
