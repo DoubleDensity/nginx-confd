@@ -8,11 +8,11 @@
 server {
 	listen 80;
 	server_name {{getv $servernamedir}};
-	return 301 https://$host$request_uri$is_args$args;
+	return 301 https://$host:443$request_uri$is_args$args;
 }
 
 server {
-	listen 80;
+	listen 443;
 	server_name {{getv $servernamedir}};
 
 	location / {
@@ -28,7 +28,7 @@ server {
 		{{$value := getv $key}}	
 		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
 
-		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}};
+		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}}:443;
 	{{end}}
 
 		add_header Pragma "no-cache";
