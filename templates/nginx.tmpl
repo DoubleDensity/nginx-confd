@@ -41,7 +41,7 @@ server {
 	{{range ls $custdir}}
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}	
-		proxy_pass http://{{getv $servernamedir}};
+		proxy_pass http://{{$filename}};
 		proxy_redirect http:// https://;
 	{{end}}
 
