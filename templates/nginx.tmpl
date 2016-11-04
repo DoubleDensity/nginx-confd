@@ -1,21 +1,7 @@
 {{range $dir := lsdir "/services/nginx"}}
 
 {{$filename := base $dir}}
-{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
-{{if ne (len (ls $custdir)) 0}}
-upstream {{$filename}} {
-	{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
-	{{range ls $custdir}}
-		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
-		{{$value := getv $key}}
-		server {{$data := json $value}}{{$data.ip}}:{{$data.port}};
-	{{end}}
-}
-{{else}}
-upstream {{$filename}} {
-	server localhost;
-}
-{{end}}
+
 
 {{$servernamedir := printf "/services/nginx/%s/root" $filename}}
 
