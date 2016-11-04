@@ -7,45 +7,37 @@
 
 server {
 	listen 80;
+	rewrite ^(.*) https://$host$1 permanent; 
 	server_name {{getv $servernamedir}};
-	return 301 https://$host:443$request_uri$is_args$args;
-}
 
-server {
-	listen 443;
-	server_name {{getv $servernamedir}};
+	client_max_body_size 4G;
+	client_header_timeout 60;
+	client_body_buffer_size 1K;
+	client_header_buffer_size 1k;
+	keepalive_timeout 20;
 
 	location / {
 
 		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
+
+		set $is_https 'off';
+            if ($http_x_forwarded_proto ~ 'https') {
+                    set $is_https 'on';
+            }
+		proxy_set_header HTTPS $is_https;
 
 	{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
 	{{range ls $custdir}}
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}	
-		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
-
-		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}}:443;
+		
+		proxy_redirect off;
+		if (!-f $request_filename) {
+			proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
+			break;
+		}
 	{{end}}
-
-		add_header Pragma "no-cache";
-		proxy_max_temp_file_size 0;
-
-		#this is the maximum upload size
-		client_max_body_size       10m;
-		client_body_buffer_size    128k;
-
-		proxy_connect_timeout      90;
-		proxy_send_timeout         90;
-		proxy_read_timeout         90;
-
-		proxy_buffer_size          4k;
-		proxy_buffers              4 32k;
-		proxy_busy_buffers_size    64k;
-		proxy_temp_file_write_size 64k;
 
 	}
 }
