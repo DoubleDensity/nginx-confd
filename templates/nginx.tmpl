@@ -69,6 +69,7 @@ server {
 			{{$value := getv $key}}
 			proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
 		{{end}}
+		{{end}}
 
 		#proxy_redirect off;
 		#proxy_redirect http://{{$filename}} https://{{$filename}};
