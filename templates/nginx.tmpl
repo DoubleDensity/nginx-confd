@@ -2,21 +2,6 @@
 
 {{$filename := base $dir}}
 {{$custdir := printf "/services/nginx/%s/servers/" $filename}}
-{{if ne (len (ls $custdir)) 0}}
-upstream {{$filename}} {
-	{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
-	{{range ls $custdir}}
-		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
-		{{$value := getv $key}}
-		server {{$data := json $value}}{{$data.ip}}:{{$data.port}} fail_timeout=0;
-	{{end}}
-}
-{{else}}
-upstream {{$filename}} {
-	server localhost;
-}
-{{end}}
-
 
 {{$servernamedir := printf "/services/nginx/%s/root" $filename}}
 
@@ -27,7 +12,7 @@ server {
 }
 
 server {
-	listen 443;
+	listen 80;
 	server_name {{getv $servernamedir}};
 
 	location / {
@@ -41,8 +26,10 @@ server {
 	{{range ls $custdir}}
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}	
-		proxy_pass http://{{$filename}};
-		proxy_redirect http://{{getv $servernamedir}}:443 https://{{getv $servernamedir}};
+		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
+		proxy_read_timeout  90;
+
+		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}};
 	{{end}}
 
 		add_header Pragma "no-cache";
