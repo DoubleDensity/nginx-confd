@@ -27,7 +27,6 @@ server {
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}	
 		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
-		proxy_read_timeout  90;
 
 		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}};
 	{{end}}
