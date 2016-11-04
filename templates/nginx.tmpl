@@ -56,7 +56,7 @@ server {
 	resolver_timeout 10s;
 {{end}}
 	location / {
-		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
+		proxy_pass http://{{$data.ip}}:{{$data.port}};
 		#proxy_redirect off;
 		#proxy_redirect http://{{$filename}} https://{{$filename}};
 		proxy_redirect default;
