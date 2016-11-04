@@ -60,6 +60,9 @@ server {
 		{{range $dir := lsdir "/services/nginx"}}
 		{{$filename := base $dir}}
 		{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
+		{{range $dir := lsdir "/services/nginx"}}
+		{{$filename := base $dir}}
+		{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
 		{{range ls $custdir}}
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}
