@@ -42,7 +42,7 @@ server {
 		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
 		{{$value := getv $key}}	
 		proxy_pass http://{{$filename}};
-		proxy_redirect http:// https://;
+		proxy_redirect http://{{getv $servernamedir}}:443 https://{{getv $servernamedir}};
 	{{end}}
 
 	}
