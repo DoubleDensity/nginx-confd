@@ -57,16 +57,18 @@ server {
 {{end}}
 	location / {
 
-		{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
-		{{range ls $custdir}}
-			{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
-			{{$value := getv $key}}	
-			proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
-		{{end}}
+	{{$custdir := printf "/services/nginx/%s/servers/" $filename}}
+	{{range ls $custdir}}
+		{{$key := printf "/services/nginx/%s/servers/%s" $filename .}}
+		{{$value := getv $key}}	
+		proxy_pass http://{{$data := json $value}}{{$data.ip}}:{{$data.port}};
+		proxy_redirect http://{{$data := json $value}}{{$data.ip}}:{{$data.port}} https://{{getv $servernamedir}};
+	{{end}}
 
 		#proxy_redirect off;
 		#proxy_redirect http://{{$filename}} https://{{$filename}};
-		proxy_redirect default;
+		#proxy_redirect      http://127.0.0.1:8080 https://jenkins.domain.tld;
+		#proxy_redirect default;
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
 		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
